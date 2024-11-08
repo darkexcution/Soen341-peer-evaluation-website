@@ -23,10 +23,13 @@ jobs:
         with:
           node-version: '18'
 
-      # Debugging step to list directory contents
+      # Debugging step to list directory contents (ensure 'frontend' folder exists)
       - name: List directory contents for debugging
         run: |
-          ls -alh  # Print directory structure to verify 'frontend' directory exists
+          echo "Listing the root directory:"
+          ls -alh
+          echo "Listing the frontend directory contents:"
+          ls -alh frontend
 
       # Cache npm dependencies
       - name: Cache npm dependencies
@@ -54,4 +57,5 @@ jobs:
         run: |
           cd frontend
           npm run build
+
 
