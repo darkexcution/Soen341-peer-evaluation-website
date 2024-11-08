@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Or the branch you are working with
+  pull_request:
+    branches:
+      - main  # Trigger workflow on pull requests targeting main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Node.js (make sure the version matches your project)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Adjust to your desired Node.js version
+
+      # Cache node modules in the 'frontend' directory based on 'package-lock.json'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Navigate to the 'frontend' directory and install dependencies
+      - name: Install dependencies
+        run: |
+          cd frontend  # Navigate to the 'frontend' folder
+          npm install  # Install the dependencies defined in 'frontend/package.json'
+
+      # Run tests (if applicable)
+      - name: Run tests
+        run: |
+          cd frontend  # Navigate to the 'frontend' folder again
+          npm test  # Run the tests
+
+      # Build the project
+      - name: Build the project
+        run: |
+          cd frontend  # Navigate to the 'frontend' folder
+          npm run build  # Build the project
+
+      # Optionally deploy or run any other steps needed for CD
+      # - name: Deploy to production
+      #   run: |
+      #     # Your deployment script here
